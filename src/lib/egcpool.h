@@ -84,6 +84,23 @@ utf8_codepoint_length(unsigned char c){
   }
 }
 
+// return length of gcluster including '\0' up to a length 'n'
+// or 'n', if s is longer. Will return 0 if n is 0!
+static inline size_t   gcluster_len_max( const char *s, size_t n)
+{
+    const char   *p        = s;   // f*ng const
+    const char   *sentinel = &s[ n];
+
+    while( p < sentinel)
+    {
+      if( ! *p++)
+         break;
+    }
+
+    return( p - s);
+}
+
+
 // Eat an EGC from the UTF-8 string input, counting bytes and columns. We use
 // libunistring's uc_is_grapheme_break() to segment EGCs. Writes the number of
 // columns to '*colcount'. Returns the number of bytes consumed, not including
@@ -101,7 +118,7 @@ utf8_egc_len(const char* gcluster, int* colcount){
   wchar_t wc, prevw = 0;
   bool injoin = false;
   do{
-    r = mbrtowc(&wc, gcluster, strlen( gcluster) + 1, &mbt);
+    r = mbrtowc(&wc, gcluster, gcluster_len_max( gcluster), &mbt);
     if(r < 0){
       // FIXME probably ought escape this somehow
       logerror("invalid UTF8: %s", gcluster);
