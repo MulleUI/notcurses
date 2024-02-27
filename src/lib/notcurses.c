@@ -561,9 +561,9 @@ ncplane* ncplane_new_internal(notcurses* nc, ncplane* n,
                nopts->rows, nopts->cols);
       return NULL;
     }
-  }else if(nopts->rows <= 0 || nopts->cols <= 0){
+  }else if((int) nopts->rows <= 0 || (int) nopts->cols <= 0){
     logerror("won't create denormalized plane (r=%d, c=%d)",
-             nopts->rows, nopts->cols);
+             (int) nopts->rows, (int) nopts->cols);
     return NULL;
   }
   ncplane* p = malloc(sizeof(*p));
